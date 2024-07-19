@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "waterproofleaves",
+	"version": "${version}",
+	"name": "WaterProofLeaves",
+	"description": "Prevents from water logging leaves without crouching, allowing you to MLG once again!",
+	"authors": [
+		"Kolala"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/waterproof-leaves",
+		"sources": "https://github.com/K0LALA/WaterProofLeaves"
+	},
+	"license": "MIT",
+	"icon": "assets/waterproofleaves/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"fr.kolala.waterproofleaves.WaterProofLeaves"
+		]
+	},
+	"mixins": [
+		"waterproofleaves.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
