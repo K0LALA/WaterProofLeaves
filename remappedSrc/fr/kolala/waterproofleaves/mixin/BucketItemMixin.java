@@ -4,7 +4,6 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidDrainable;
 import net.minecraft.block.FluidFillable;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -37,7 +36,7 @@ public abstract class BucketItemMixin extends Item {
 
     @Unique
     private static ItemStack getEmptiedStack(ItemStack stack, PlayerEntity player) {
-        return !player.getAbilities().creativeMode ? new ItemStack(Items.BUCKET) : stack;
+        return !player.isInCreativeMode() ? new ItemStack(Items.BUCKET) : stack;
     }
 
     /**
@@ -63,7 +62,7 @@ public abstract class BucketItemMixin extends Item {
             } else if (this.fluid == Fluids.EMPTY) {
                 BlockState blockState = world.getBlockState(blockPos);
                 if (blockState.getBlock() instanceof FluidDrainable fluidDrainable) {
-                    ItemStack itemStack2 = fluidDrainable.tryDrainFluid(world, blockPos, blockState);
+                    ItemStack itemStack2 = fluidDrainable.tryDrainFluid(user, world, blockPos, blockState);
                     if (!itemStack2.isEmpty()) {
                         user.incrementStat(Stats.USED.getOrCreateStat(this));
                         fluidDrainable.getBucketFillSound().ifPresent(sound -> user.playSound(sound, 1.0F, 1.0F));
@@ -80,7 +79,7 @@ public abstract class BucketItemMixin extends Item {
                 return TypedActionResult.fail(itemStack);
             } else {
                 BlockState blockState = world.getBlockState(blockPos);
-                BlockPos blockPos3 = blockState.getBlock() instanceof FluidFillable && this.fluid == Fluids.WATER && !(blockState.getBlock() instanceof LeavesBlock && !user.isSneaking()) ? blockPos : blockPos2;
+                BlockPos blockPos3 = blockState.getBlock() instanceof FluidFillable && this.fluid == Fluids.WATER && user.isSneaking() ? blockPos : blockPos2;
                 if (this.placeFluid(user, world, blockPos3, blockHitResult)) {
                     this.onEmptied(user, world, itemStack, blockPos3);
                     if (user instanceof ServerPlayerEntity) {
@@ -88,7 +87,8 @@ public abstract class BucketItemMixin extends Item {
                     }
 
                     user.incrementStat(Stats.USED.getOrCreateStat(this));
-                    return TypedActionResult.success(getEmptiedStack(itemStack, user), world.isClient());
+                    ItemStack itemStack2 = ItemUsage.exchangeStack(itemStack, user, getEmptiedStack(itemStack, user));
+                    return TypedActionResult.success(itemStack2, world.isClient());
                 } else {
                     return TypedActionResult.fail(itemStack);
                 }
