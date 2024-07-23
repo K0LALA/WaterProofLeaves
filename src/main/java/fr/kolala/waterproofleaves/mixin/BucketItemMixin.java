@@ -4,6 +4,7 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidDrainable;
 import net.minecraft.block.FluidFillable;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -79,7 +80,7 @@ public abstract class BucketItemMixin extends Item {
                 return TypedActionResult.fail(itemStack);
             } else {
                 BlockState blockState = world.getBlockState(blockPos);
-                BlockPos blockPos3 = blockState.getBlock() instanceof FluidFillable && this.fluid == Fluids.WATER && user.isSneaking() ? blockPos : blockPos2;
+                BlockPos blockPos3 = blockState.getBlock() instanceof FluidFillable && this.fluid == Fluids.WATER && !(blockState.getBlock() instanceof LeavesBlock && !user.isSneaking()) ? blockPos : blockPos2;
                 if (this.placeFluid(user, world, blockPos3, blockHitResult)) {
                     this.onEmptied(user, world, itemStack, blockPos3);
                     if (user instanceof ServerPlayerEntity) {
